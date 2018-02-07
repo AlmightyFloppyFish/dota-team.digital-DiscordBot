@@ -1,0 +1,41 @@
+v2.01
+
+```
+help:
+	shows this message
+```
+```
+spam:
+	Sends a message multiple times
+
+	spam : message : amount-of-messages : minutes-inbetween : channel
+
+	spam : Remember special event at 18:00 GMT! : 5 : 120 : generalchat
+	sends message to generalchat 5 times, once every 2 hours.
+
+	Can be stopped at any time using stop : spam
+```
+```
+play:
+	Plays music from youtube URL.
+	play : https://www.youtube.com/watch?v=1gOQiFEwnZ8
+	OR
+	play : https://www.youtube.com/watch?v=1gOQiFEwnZ8 : 4
+	to play the song 4 times
+
+	There's currently no way to change volume,
+	so everyone will have to manually use the discord audio controls.
+	I'll try to fix this in the future.
+
+	Can be stopped at any time using stop : music
+```
+```
+joinme:
+	Moves the bot to your current voice channel.
+	The bot already does this automaticly when you use the `play` command.
+```
+```
+stop:
+	Stops either `spam` or `play`
+	stop : music / stop : spam
+```
