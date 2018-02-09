@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"github.com/bwmarrin/discordgo"
+	"github.com/jeffreymkabot/ytdl"
 	"github.com/jonas747/dca"
-	"github.com/rylio/ytdl"
 	"io"
 	"strconv"
 	"time"
