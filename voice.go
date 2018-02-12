@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/jeffreymkabot/ytdl"
 	"github.com/jonas747/dca"
@@ -10,37 +11,33 @@ import (
 	"time"
 )
 
-func music(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string) {
-
-	defer recover()
+func music(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 
 	// Get amount of args in command
 	comLength := len(commandArray)
 
 	// Selects if it should start music in "Multiple times" or "Single time" mode
-	if comLength == 2 {
-		PlayMusic(s, m, commandArray)
-	} else if comLength == 3 {
+	if comLength == 1 {
+		PlayMusic(s, m, commandArray, command)
+	} else if comLength == 2 {
 
 		// Get int value from discord amount input
-		amount, err := strconv.Atoi(commandArray[2])
+		amount, err := strconv.Atoi(commandArray[1])
 		if err != nil {
-			panic(err)
+			s.ChannelMessageSend(m.ChannelID, "Could not understand how many times i was supposed to play that, You said to play it: "+commandArray[1]+"times")
+			return
 		}
 
 		for count := 1; count <= amount; count++ {
-			PlayMusic(s, m, commandArray)
+			PlayMusic(s, m, commandArray, command)
 		}
 	}
-
 }
 
 // The actual command
-func PlayMusic(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string) {
+func PlayMusic(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 
-	if commandArray[0] == "play" {
-
-		defer recover()
+	if command == "play" {
 
 		callinguser := m.Author
 
@@ -51,29 +48,29 @@ func PlayMusic(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []
 		options.Application = "lowdelay"
 		options.Volume = 15
 
-		videoInfo, err := ytdl.GetVideoInfo(commandArray[1])
+		videoInfo, err := ytdl.GetVideoInfo(commandArray[0])
 		if err != nil {
-			panic(err)
-			s.ChannelMessageSend(m.ChannelID, "Could not get required youtube video info")
+			s.ChannelMessageSend(m.ChannelID, "Could not get required youtube video info, Link is probably broken. Maybe the video is blocked in Sweden?")
+			return
 		}
 
 		format := videoInfo.Formats.Extremes(ytdl.FormatAudioBitrateKey, true)[0]
 		downloadURL, err := videoInfo.GetDownloadURL(format)
 		if err != nil {
-			panic(err)
-			s.ChannelMessageSend(m.ChannelID, "Could not parse video URL")
+			s.ChannelMessageSend(m.ChannelID, "Could not parse video URL: parse.go | GetDownloadURL()")
+			return
 		}
 
 		encodingSession, err := dca.EncodeFile(downloadURL.String(), options)
 		if err != nil {
-			panic(err)
+			s.ChannelMessageSend(m.ChannelID, "Could not create audio stream")
 		}
 		defer encodingSession.Cleanup()
 
 		listeningchannel, err := joinUserVoiceChannel(s, callinguser.ID)
 		if err != nil {
 			s.ChannelMessageSend(m.ChannelID, "Could not join your voice channel, Maybe i don't have permission to? Are you in a voice channel so i can join you?")
-			panic(err)
+			return
 		}
 
 		done := make(chan error)
@@ -87,7 +84,8 @@ func PlayMusic(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []
 				return
 			case err2 := <-done:
 				if err2 != nil && err2 != io.EOF {
-					panic(err)
+					fmt.Println(err)
+					return
 				}
 				return
 			default:
