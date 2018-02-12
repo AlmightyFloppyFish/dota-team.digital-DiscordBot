@@ -1,5 +1,5 @@
 v2.01
-
+// THIS HELP MESSAGE FILE IS OUTDATED
 ```
 help:
 	shows this message
