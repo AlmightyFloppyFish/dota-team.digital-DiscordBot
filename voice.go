@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"github.com/jeffreymkabot/ytdl"
 	"github.com/jonas747/dca"
@@ -84,7 +83,6 @@ func PlayMusic(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []
 				return
 			case err2 := <-done:
 				if err2 != nil && err2 != io.EOF {
-					fmt.Println(err)
 					return
 				}
 				return

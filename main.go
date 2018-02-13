@@ -29,6 +29,9 @@ type channelInfoType struct {
 	token          string
 	botchannel     string
 	generalchannel string
+	teamdaedelus   string
+	teamdesolator  string
+	teamorchid     string
 }
 
 func main() {
@@ -58,6 +61,9 @@ func main() {
 			token:          string(digTok),
 			botchannel:     "285511576700846081",
 			generalchannel: "285922016534462464",
+			teamdaedelus:   "379528439415177217",
+			teamdesolator:  "379528393064054785",
+			teamorchid:     "408643128346673153",
 		}
 	}
 

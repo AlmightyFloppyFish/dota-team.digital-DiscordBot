@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// Splits the words into string array on ' : '
+// Splits the words into string array on ' : ', Unused since v2.10
 func ColonSplit(s *discordgo.Session, m *discordgo.MessageCreate) []string {
 
 	byteArr := []byte(m.Content)
