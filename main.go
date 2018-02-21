@@ -108,6 +108,7 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
+
 	// Launch commands here. // if statement here checks if the channel is botchannel
 	if m.ChannelID == channel.botchannel {
 
@@ -120,7 +121,11 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go spam(s, m, argumentArray, command)
 		go music(s, m, argumentArray, command)
 		go stop(s, m, argumentArray, command)
+		go lineup(s, m, argumentArray, command)
+		go viewTeam(s, m, argumentArray, command)
+		go setupGame(s, m, argumentArray, command)
 	}
+	go viewgame(s, m)
 }
 
 //

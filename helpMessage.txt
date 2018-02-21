@@ -1,4 +1,4 @@
-v2.10
+v2.20
 ```
 !help:
 	shows this message
@@ -19,7 +19,7 @@ v2.10
 	Plays music from youtube URL.
 	!play https://www.youtube.com/watch?v=1gOQiFEwnZ8
 	OR
-	play https://www.youtube.com/watch?v=1gOQiFEwnZ8 4
+	!play https://www.youtube.com/watch?v=1gOQiFEwnZ8 4
 	to play the song 4 times
 
 	There's currently no way to change volume,
@@ -36,5 +36,25 @@ v2.10
 ```
 !stop:
 	Stops either `spam` or `play`
-	__!stop music__ || __!stop spam__
+	!stop music | !stop spam
+```
+
+```
+!teamNAME_OF_TEAM:
+	Saves your team layout for the housematch.
+	Syntax:  !teamdesolator "five, players, for, the, 5v5" "1v1, players" "1v1, heroes"
+	Example: !teamorchid "Arteezy, Dendi, Loda, UNiVeRsE, Fear" "Fear, Dendi" "Riki, Pugna"
+
+!viewteam:
+	Views a saved team.
+	Syntax:  !viewteam teamname/all
+	Example: !viewteam orchid
+	Example: !viewteam all
+
+!setupgame:
+	Prepares the 1v1's by randomizing who goes vs who and which heroes are in which games
+	If all 3 teams are saved just use !setupgame
+
+!viewgame:
+	Shows the layout for the 1v1's
 ```

@@ -12,23 +12,26 @@ import (
 
 func music(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 
-	// Get amount of args in command
-	comLength := len(commandArray)
+	if command == "play" {
 
-	// Selects if it should start music in "Multiple times" or "Single time" mode
-	if comLength == 1 {
-		PlayMusic(s, m, commandArray, command)
-	} else if comLength == 2 {
+		// Get amount of args in command
+		comLength := len(commandArray)
 
-		// Get int value from discord amount input
-		amount, err := strconv.Atoi(commandArray[1])
-		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Could not understand how many times i was supposed to play that, You said to play it: "+commandArray[1]+"times")
-			return
-		}
-
-		for count := 1; count <= amount; count++ {
+		// Selects if it should start music in "Multiple times" or "Single time" mode
+		if comLength == 1 {
 			PlayMusic(s, m, commandArray, command)
+		} else if comLength == 2 {
+
+			// Get int value from discord amount input
+			amount, err := strconv.Atoi(commandArray[1])
+			if err != nil {
+				s.ChannelMessageSend(m.ChannelID, "Could not understand how many times i was supposed to play that, You said to play it: "+commandArray[1]+" times")
+				return
+			}
+
+			for count := 1; count <= amount; count++ {
+				PlayMusic(s, m, commandArray, command)
+			}
 		}
 	}
 }
