@@ -84,6 +84,41 @@ type random1v1setup struct {
 	Game3 [3]string
 }
 
+func addToLeage(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
+	if command == "addLeague" {
+		userIDbytes := []byte(commandArray[0])
+		userID := userIDbytes[3:21]
+
+		s.ChannelMessageSend(m.ChannelID, "Attempting to add ID: __"+string(userID)+"__ To group `League Players`")
+
+		err := s.GuildMemberRoleAdd(channel.guild, string(userID), "416133412013998080")
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, "Something went wrong ):, Check bot console for details")
+			fmt.Println(err)
+			return
+		} else {
+			s.ChannelMessageSend(m.ChannelID, "User sucessfully gained role")
+			return
+		}
+	}
+	if command == "removeLeague" {
+		userIDbytes := []byte(commandArray[0])
+		userID := userIDbytes[3:21]
+
+		s.ChannelMessageSend(m.ChannelID, "Attempting to remove ID: __"+string(userID)+"__ From group `League Players`")
+
+		err := s.GuildMemberRoleRemove(channel.guild, string(userID), "416133412013998080")
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, "Something went wrong ):, Check bot console for details")
+			fmt.Println(err)
+			return
+		} else {
+			s.ChannelMessageSend(m.ChannelID, "User sucessfully lost role")
+		}
+	}
+	return
+}
+
 func setupGame(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 
 	if m.Content == "!setupgame" || m.Content == "!setupgame " {

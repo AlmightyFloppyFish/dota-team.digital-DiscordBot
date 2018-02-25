@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	debug  bool   = true
+	debug  bool   = false
 	prefix string = "!"
 )
 
@@ -27,6 +27,7 @@ var (
 
 type channelInfoType struct {
 	token          string
+	guild          string
 	botchannel     string
 	generalchannel string
 	teamdaedelus   string
@@ -53,12 +54,14 @@ func main() {
 	if debug {
 		channel = channelInfoType{
 			token:          string(debTok),
+			guild:          "378651898519093248",
 			botchannel:     "410195120135077889",
 			generalchannel: "378651898519093250",
 		}
 	} else {
 		channel = channelInfoType{
 			token:          string(digTok),
+			guild:          "242808761641730048",
 			botchannel:     "285511576700846081",
 			generalchannel: "285922016534462464",
 			teamdaedelus:   "379528439415177217",
@@ -67,6 +70,7 @@ func main() {
 		}
 	}
 
+	// Log into discord
 	discord, err := discordgo.New(channel.token)
 	defer discord.Close()
 
@@ -124,6 +128,7 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go lineup(s, m, argumentArray, command)
 		go viewTeam(s, m, argumentArray, command)
 		go setupGame(s, m, argumentArray, command)
+		go addToLeage(s, m, argumentArray, command)
 	}
 	go viewgame(s, m)
 }
