@@ -86,14 +86,15 @@ type random1v1setup struct {
 
 func addToLeage(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 	if command == "addLeague" {
-		userIDbytes := []byte(commandArray[0])
-		userID := userIDbytes[3:21]
 
-		s.ChannelMessageSend(m.ChannelID, "Attempting to add ID: __"+string(userID)+"__ To group `League Players`")
+		userIDbytes := commandArray[0]
+		userID := strings.TrimLeft(strings.TrimRight(userIDbytes, "> "), " <@!")
+
+		s.ChannelMessageSend(channel.botchannel, "Attempting to add ID: __"+string(userID)+"__ To group `League Players`")
 
 		err := s.GuildMemberRoleAdd(channel.guild, string(userID), "416133412013998080")
 		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Something went wrong ):, Check bot console for details")
+			s.ChannelMessageSend(channel.botchannel, "Something went wrong ):, Check bot console for details")
 			fmt.Println(err)
 			return
 		} else {
@@ -102,14 +103,15 @@ func addToLeage(s *discordgo.Session, m *discordgo.MessageCreate, commandArray [
 		}
 	}
 	if command == "removeLeague" {
-		userIDbytes := []byte(commandArray[0])
-		userID := userIDbytes[3:21]
 
-		s.ChannelMessageSend(m.ChannelID, "Attempting to remove ID: __"+string(userID)+"__ From group `League Players`")
+		userIDbytes := commandArray[0]
+		userID := strings.TrimLeft(strings.TrimRight(userIDbytes, "> "), " <@!")
+
+		s.ChannelMessageSend(channel.botchannel, "Attempting to remove ID: __"+string(userID)+"__ From group `League Players`")
 
 		err := s.GuildMemberRoleRemove(channel.guild, string(userID), "416133412013998080")
 		if err != nil {
-			s.ChannelMessageSend(m.ChannelID, "Something went wrong ):, Check bot console for details")
+			s.ChannelMessageSend(channel.botchannel, "Something went wrong ):, Check bot console for details")
 			fmt.Println(err)
 			return
 		} else {

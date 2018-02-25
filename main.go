@@ -130,6 +130,15 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go setupGame(s, m, argumentArray, command)
 		go addToLeage(s, m, argumentArray, command)
 	}
+	if m.ChannelID == "415295523927621632" {
+
+		argumentArray, command := easySplit(s, m)
+
+		callingUser := m.Author
+		if callingUser.ID == "179945962490429451" || callingUser.ID == "220120722939445248" || callingUser.ID == "242788102928596992" {
+			go addToLeage(s, m, argumentArray, command)
+		}
+	}
 	go viewgame(s, m)
 }
 
