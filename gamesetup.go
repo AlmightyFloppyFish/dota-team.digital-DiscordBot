@@ -121,9 +121,122 @@ func addToLeage(s *discordgo.Session, m *discordgo.MessageCreate, commandArray [
 	return
 }
 
-func setupGame(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
+// I am well aware that copying large chunks like this is a bad habbit, got other projects i want to work on so this is a ghetto quick solution
+func setupGame2(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 
-	if m.Content == "!setupgame" || m.Content == "!setupgame " {
+	if m.Content == "!setupgame2" || m.Content == "!setupgame2 " {
+
+		s.ChannelMessageSend(m.ChannelID, "Atempting to open, "+"./teams/"+makeFolderName()+"/"+"teamorchid | teamdesolator.gob")
+
+		var err error
+		var (
+			deso houseSetup
+			orch houseSetup
+		)
+
+		// This is horrible code and I'll make a helper method in the future. Just lazy today
+		err = decodeGob("teamdesolator", &deso)
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, "Could not read info from gob files, are both teams complete?; Aborting (check console for debug information)")
+			fmt.Println(err)
+			return
+		}
+
+		err = decodeGob("teamorchid", &orch)
+		if err != nil {
+			s.ChannelMessageSend(m.ChannelID, "Could not read info from gob files, are all both complete?; Aborting (check console for debug information)")
+			fmt.Println(err)
+			return
+		}
+
+		var randomNumber int
+		var completeSetup random1v1setup
+
+		// Randomization init
+		rand.Seed(time.Now().UTC().UnixNano())
+		randomNumber = rand.Intn(2)
+
+		fmt.Println(completeSetup)
+
+		// New pattern for second selection
+		rand.Seed(time.Now().UTC().UnixNano())
+		randomNumber = rand.Intn(2)
+
+		// Decides setup for second player in deso depending on random number
+		if randomNumber == 0 {
+			fmt.Println(deso.P1v1[0])
+			completeSetup.Game2[0] = deso.P1v1[1]
+			completeSetup.Game2[1] = orch.P1v1[0]
+			orch.P1v1 = append(orch.P1v1[:0], orch.P1v1[0+1:]...)
+		} else if randomNumber == 1 {
+			completeSetup.Game2[0] = deso.P1v1[1]
+			completeSetup.Game2[1] = orch.P1v1[1]
+			orch.P1v1 = append(orch.P1v1[:1], orch.P1v1[1+1:]...)
+		}
+
+		completeSetup.Game1[0] = deso.P1v1[0]
+		completeSetup.Game1[1] = orch.P1v1[0]
+
+		/* All players randomized for 1v1 by now */
+
+		// All preffered heroes in one array
+		var allHeroes []string
+		allHeroes = append(allHeroes, deso.H1v1[0])
+		allHeroes = append(allHeroes, deso.H1v1[1])
+		allHeroes = append(allHeroes, orch.H1v1[0])
+		allHeroes = append(allHeroes, orch.H1v1[1])
+
+		// New random number for Hero randomization
+		rand.Seed(time.Now().UTC().UnixNano())
+		randomNumber = rand.Intn(4) // 0 -> 3
+
+		completeSetup.Game1[2] = allHeroes[randomNumber]
+		allHeroes = append(allHeroes[:randomNumber], allHeroes[randomNumber+1:]...) // Remove choosen hero from array of possibles
+
+		rand.Seed(time.Now().UTC().UnixNano())
+		randomNumber = rand.Intn(4) // 0 -> 3
+
+		completeSetup.Game2[2] = allHeroes[randomNumber]
+		allHeroes = append(allHeroes[:randomNumber], allHeroes[randomNumber+1:]...) // Remove choosen hero from array of possibles
+
+		fmt.Println(completeSetup)
+
+		// Save to gob file
+
+		var fileerr error
+		var gobfile *os.File
+
+		// If gobfile doesn't exist, create it. Else open it
+		if _, err := os.Stat("./teams/" + makeFolderName() + "/1v1lineup.gob"); os.IsNotExist(err) {
+			gobfile, fileerr = os.Create("./teams/" + makeFolderName() + "/1v1lineup.gob")
+			gobfile.Close()
+			gobfile, fileerr = os.OpenFile("./teams/"+makeFolderName()+"/1v1lineup.gob", os.O_WRONLY, 0777)
+		} else {
+			gobfile, fileerr = os.OpenFile("./teams/"+makeFolderName()+"/1v1lineup.gob", os.O_WRONLY, 0777)
+		}
+		defer gobfile.Close()
+		if fileerr == nil {
+			gobencoder := gob.NewEncoder(gobfile)
+			encerr := gobencoder.Encode(completeSetup)
+			if encerr != nil {
+				fmt.Println(encerr)
+				return
+			}
+		} else {
+			s.ChannelMessageSend(m.ChannelID, "1v1lineup.gob could not be made or read, aborting...")
+			fmt.Println(fileerr)
+			return
+		}
+
+		// Fancy output here to discord chat here
+		s.ChannelMessageSend(channel.botchannel, "__**1 Versus 1 Lineups:**__\n```\n"+completeSetup.Game1[0]+" VS "+completeSetup.Game1[1]+"   |   "+completeSetup.Game1[2]+"\n"+completeSetup.Game2[0]+" VS "+completeSetup.Game2[1]+"   |   "+completeSetup.Game2[2]+"```")
+	}
+	return
+}
+
+func setupGame3(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
+
+	if m.Content == "!setupgame3" || m.Content == "!setupgame3 " {
 
 		s.ChannelMessageSend(m.ChannelID, "Atempting to open, "+"./teams/"+makeFolderName()+"/"+"teamorchid/teamdesolator/teamdaedalus.gob")
 

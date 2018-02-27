@@ -127,7 +127,8 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go stop(s, m, argumentArray, command)
 		go lineup(s, m, argumentArray, command)
 		go viewTeam(s, m, argumentArray, command)
-		go setupGame(s, m, argumentArray, command)
+		go setupGame2(s, m, argumentArray, command)
+		go setupGame3(s, m, argumentArray, command)
 		go addToLeage(s, m, argumentArray, command)
 	}
 	if m.ChannelID == "415295523927621632" {
