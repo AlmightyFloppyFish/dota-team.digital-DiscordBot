@@ -126,16 +126,16 @@ func setupGame2(s *discordgo.Session, m *discordgo.MessageCreate, commandArray [
 
 	if m.Content == "!setupgame2" || m.Content == "!setupgame2 " {
 
-		s.ChannelMessageSend(m.ChannelID, "Atempting to open, "+"./teams/"+makeFolderName()+"/"+"teamorchid | teamdesolator.gob")
+		s.ChannelMessageSend(m.ChannelID, "Atempting to open, "+"./teams/"+makeFolderName()+"/"+"teamdaedalus | teamdesolator.gob")
 
 		var err error
 		var (
-			deso houseSetup
+			daed houseSetup
 			orch houseSetup
 		)
 
 		// This is horrible code and I'll make a helper method in the future. Just lazy today
-		err = decodeGob("teamdesolator", &deso)
+		err = decodeGob("teamdaedalus", &daed)
 		if err != nil {
 			s.ChannelMessageSend(m.ChannelID, "Could not read info from gob files, are both teams complete?; Aborting (check console for debug information)")
 			fmt.Println(err)
@@ -164,25 +164,25 @@ func setupGame2(s *discordgo.Session, m *discordgo.MessageCreate, commandArray [
 
 		// Decides setup for second player in deso depending on random number
 		if randomNumber == 0 {
-			fmt.Println(deso.P1v1[0])
-			completeSetup.Game2[0] = deso.P1v1[1]
+			fmt.Println(daed.P1v1[0])
+			completeSetup.Game2[0] = daed.P1v1[1]
 			completeSetup.Game2[1] = orch.P1v1[0]
 			orch.P1v1 = append(orch.P1v1[:0], orch.P1v1[0+1:]...)
 		} else if randomNumber == 1 {
-			completeSetup.Game2[0] = deso.P1v1[1]
+			completeSetup.Game2[0] = daed.P1v1[1]
 			completeSetup.Game2[1] = orch.P1v1[1]
 			orch.P1v1 = append(orch.P1v1[:1], orch.P1v1[1+1:]...)
 		}
 
-		completeSetup.Game1[0] = deso.P1v1[0]
+		completeSetup.Game1[0] = daed.P1v1[0]
 		completeSetup.Game1[1] = orch.P1v1[0]
 
 		/* All players randomized for 1v1 by now */
 
 		// All preffered heroes in one array
 		var allHeroes []string
-		allHeroes = append(allHeroes, deso.H1v1[0])
-		allHeroes = append(allHeroes, deso.H1v1[1])
+		allHeroes = append(allHeroes, daed.H1v1[0])
+		allHeroes = append(allHeroes, daed.H1v1[1])
 		allHeroes = append(allHeroes, orch.H1v1[0])
 		allHeroes = append(allHeroes, orch.H1v1[1])
 
@@ -444,7 +444,7 @@ func viewgame(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, "__**1 Versus 1 Lineups:**__\n```\n"+completeSetup.Game1[0]+" VS "+completeSetup.Game1[1]+"   |   "+completeSetup.Game1[2]+"\n"+completeSetup.Game2[0]+" VS "+completeSetup.Game2[1]+"   |   "+completeSetup.Game2[2]+"\n"+completeSetup.Game3[0]+" VS "+completeSetup.Game3[1]+"   |   "+completeSetup.Game3[2]+"\n```")
+		s.ChannelMessageSend(m.ChannelID, "__**1 Versus 1 Lineups:**__\n```\n"+completeSetup.Game1[0]+" VS "+completeSetup.Game1[1]+"   |   "+completeSetup.Game1[2]+"\n"+completeSetup.Game2[0]+" VS "+completeSetup.Game2[1]+"   |   "+completeSetup.Game2[2])
 
 	}
 	return

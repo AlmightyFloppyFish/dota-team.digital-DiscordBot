@@ -113,11 +113,11 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	// colonArray := ColonSplit(s, m)
+	argumentArray, command := easySplit(s, m)
+
 	// Launch commands here. // if statement here checks if the channel is botchannel
 	if m.ChannelID == channel.botchannel {
-
-		// colonArray := ColonSplit(s, m)
-		argumentArray, command := easySplit(s, m)
 
 		go joinme(s, m, command)
 		go lifecheck(s, m)
@@ -126,21 +126,30 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go music(s, m, argumentArray, command)
 		go stop(s, m, argumentArray, command)
 		go lineup(s, m, argumentArray, command)
-		go viewTeam(s, m, argumentArray, command)
 		go setupGame2(s, m, argumentArray, command)
 		go setupGame3(s, m, argumentArray, command)
 		go addToLeage(s, m, argumentArray, command)
 	}
+
+	callingUser := m.Author
+
 	if m.ChannelID == "415295523927621632" {
 
 		argumentArray, command := easySplit(s, m)
-
-		callingUser := m.Author
 		if callingUser.ID == "179945962490429451" || callingUser.ID == "220120722939445248" || callingUser.ID == "242788102928596992" {
 			go addToLeage(s, m, argumentArray, command)
 		}
 	}
-	go viewgame(s, m)
+	callingMember, _ := s.GuildMember(channel.guild, callingUser.ID)
+
+	for _, v := range callingMember.Roles {
+		if v == "281077340845506562" || callingUser.ID == "220120722939445248" || callingUser.ID == "242788102928596992" {
+			go viewgame(s, m)
+			go viewTeam(s, m, argumentArray, command)
+			return
+		}
+	}
+	return
 }
 
 //

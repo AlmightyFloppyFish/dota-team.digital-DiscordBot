@@ -1,4 +1,4 @@
-v2.21
+v2.22
 ```
 !help:
 	shows this message
@@ -40,7 +40,7 @@ v2.21
 ```
 
 ```
-!teamNAME_OF_TEAM:
+!teamdaedalus || !teamorchid || !teamdesolator:
 	Saves your team layout for the housematch.
 	Syntax:  !teamdesolator "five, players, for, the, 5v5" "1v1, players" "1v1, heroes"
 	Example: !teamorchid "Arteezy, Dendi, Loda, UNiVeRsE, Fear" "Fear, Dendi" "Riki, Pugna"
@@ -51,9 +51,9 @@ v2.21
 	Example: !viewteam orchid
 	Example: !viewteam all
 
-!setupgame:
+!setupgame2 || !setupgame3:
 	Prepares the 1v1's by randomizing who goes vs who and which heroes are in which games
-	If all 3 teams are saved just use !setupgame
+	If all 3 teams are saved use !setupgame3
 
 !viewgame:
 	Shows the layout for the 1v1's
