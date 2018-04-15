@@ -1,7 +1,14 @@
-v2.22
+v2.23
 ```
 !help:
 	shows this message
+```
+```
+!lowprio:
+	Gives a player the "Low Priority" role for a specified amount of times (in minutes)
+
+	!lowprio 54932875623954 20
+	Puts the player with the ID to low priority for 20 minutes
 ```
 ```
 !spam:

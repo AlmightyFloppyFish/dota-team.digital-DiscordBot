@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/bwmarrin/discordgo"
 	"io/ioutil"
@@ -92,6 +93,8 @@ func main() {
 		fmt.Println("Session opened. Bot should now apear as a user")
 	}
 
+	go checklowprio(discord)
+
 	// Checks for task kill instruction (like ^C)
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
@@ -104,7 +107,7 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Content == "restart" {
 		s.ChannelMessageSend(m.ChannelID, "*Restarting bot, Should only take a few seconds.*")
 		s.Close()
-		fmt.Println("Session is being shut down! (This has been done intentionally)")
+		fmt.Println("  -----  WARNING Session is being shut down! (This has been done intentionally)")
 		os.Exit(3)
 	}
 
@@ -129,6 +132,7 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 		go setupGame2(s, m, argumentArray, command)
 		go setupGame3(s, m, argumentArray, command)
 		go addToLeage(s, m, argumentArray, command)
+		go lowprio(s, m, argumentArray, command)
 	}
 
 	callingUser := m.Author
@@ -155,6 +159,115 @@ func whenMessage(s *discordgo.Session, m *discordgo.MessageCreate) {
 //
 // ------------------------------------------------------- //
 //
+
+type LowPrioPlayerInfo struct {
+	ID          string
+	TimeCreated int64
+	Duration    int64
+}
+
+func checklowprio(s *discordgo.Session) {
+
+	for {
+
+		allFiles, _ := ioutil.ReadDir("./lowprio/")
+
+		for _, v := range allFiles {
+
+			fileName := v.Name()
+			InFile, err := os.Open("./lowprio/" + fileName)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+
+			dec := gob.NewDecoder(InFile)
+
+			var Res LowPrioPlayerInfo
+			err2 := dec.Decode(&Res)
+			if err2 != nil {
+				s.ChannelMessageSend(channel.botchannel, "Unable to decode gob data from ./lowprio/"+fileName)
+				fmt.Println(err2)
+				return
+			}
+
+			currentTime := time.Now().Unix()
+
+			if Res.TimeCreated <= currentTime-Res.Duration {
+				s.ChannelMessageSend(channel.botchannel, "Removing player "+Res.ID+" from low priority")
+				s.GuildMemberRoleRemove(channel.guild, Res.ID, "286629932996493313")
+				InFile.Close()
+				os.Remove("./lowprio/" + fileName)
+			}
+
+			InFile.Close()
+		}
+		time.Sleep(1 * time.Minute)
+	}
+}
+
+func lowprio(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
+
+	if command == "lowprio" {
+
+		callingMember, _ := s.GuildMember(channel.guild, m.Author.ID)
+
+		for _, v := range callingMember.Roles {
+			if v == "277034907803582464" {
+
+				fmt.Println(commandArray[0])
+
+				_, err := strconv.Atoi(commandArray[0])
+				if err != nil {
+					s.ChannelMessageSend(channel.botchannel, "That doesn't look like a persons ID to me. I'm looking for something like !lowprio *37285847386918486* 40")
+					return
+				}
+				duration, err := strconv.Atoi(commandArray[1])
+				if err != nil {
+					s.ChannelMessageSend(channel.botchannel, "That doesn't look like a duration in minutes to me. I'm looking for something like !lowprio *54375982347598374* 40")
+				}
+
+				err2 := s.GuildMemberRoleAdd(channel.guild, commandArray[0], "286629932996493313")
+				if err2 != nil {
+					s.ChannelMessageSend(channel.botchannel, "Something went wrong ):, Check bot console for details")
+					fmt.Println(err2)
+					return
+				} else {
+					s.ChannelMessageSend(channel.botchannel, "User sucessfully gained role for"+commandArray[1]+"minutes")
+
+					// Timer save stuff here
+					if _, err := os.Stat("./lowprio/" + commandArray[0]); os.IsNotExist(err) {
+						os.Create("./lowprio/" + commandArray[0])
+					} else {
+						os.OpenFile("./lowprio"+commandArray[0], os.O_WRONLY, 0777)
+					}
+					var enc *gob.Encoder
+					OutFile, err := os.OpenFile("./lowprio/"+commandArray[0], os.O_WRONLY, 0777)
+					if err == nil {
+						enc = gob.NewEncoder(OutFile)
+					}
+					defer OutFile.Close()
+
+					timeMade := time.Now().Unix()
+
+					OutData := LowPrioPlayerInfo{
+						ID:          commandArray[0],
+						Duration:    int64(duration * 60),
+						TimeCreated: timeMade,
+					}
+
+					err3 := enc.Encode(OutData)
+					if err3 != nil {
+						s.ChannelMessageSend(channel.botchannel, "I was unable to encode the data for user "+OutData.ID+" this is bad")
+						return
+					}
+
+					return
+				}
+			}
+		}
+	}
+}
 
 func stop(s *discordgo.Session, m *discordgo.MessageCreate, commandArray []string, command string) {
 	if command == "stop" {

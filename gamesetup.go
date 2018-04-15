@@ -444,7 +444,7 @@ func viewgame(s *discordgo.Session, m *discordgo.MessageCreate) {
 			return
 		}
 
-		s.ChannelMessageSend(m.ChannelID, "__**1 Versus 1 Lineups:**__\n```\n"+completeSetup.Game1[0]+" VS "+completeSetup.Game1[1]+"   |   "+completeSetup.Game1[2]+"\n"+completeSetup.Game2[0]+" VS "+completeSetup.Game2[1]+"   |   "+completeSetup.Game2[2])
+		s.ChannelMessageSend(m.ChannelID, "__**1 Versus 1 Lineups:**__\n```\n"+completeSetup.Game1[0]+" VS "+completeSetup.Game1[1]+"   |   "+completeSetup.Game1[2]+"\n"+completeSetup.Game2[0]+" VS "+completeSetup.Game2[1]+"   |   "+completeSetup.Game2[2]+"\n```")
 
 	}
 	return
